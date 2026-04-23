@@ -24,9 +24,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // disable crsf
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.
-                        requestMatchers(HttpMethod.POST,"/api/users/register").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST,"/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/jobs").permitAll()
                         .anyRequest().authenticated()).httpBasic(basic ->
                         basic.realmName("Job Tracker"));
         return http.build();
