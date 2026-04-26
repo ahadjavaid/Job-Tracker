@@ -26,8 +26,11 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/api/users/register").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/users").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/jobs").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/jobs").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/jobs/**").permitAll()
                         .anyRequest().authenticated()).httpBasic(basic ->
                         basic.realmName("Job Tracker"));
         return http.build();

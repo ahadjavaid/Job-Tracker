@@ -26,10 +26,10 @@ public class ApplicationService {
     private JobRepository jobRepository;
 
 
-    public ApplicationResponse applyToJob(Long userId, Long jobId) {
+    public ApplicationResponse applyToJob(String username, Long jobId) {
 
         // Business Rule 1: user must exist
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
 
         // Business Rule 2: job must exist
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
@@ -40,7 +40,7 @@ public class ApplicationService {
         }
 
         // Business Rule 4: user cannot apply twice to same job
-        if(applicationRepository.existsByUserIdAndJobId(userId, jobId)) {
+        if(applicationRepository.existsByUserIdAndJobId(user.getId(), jobId)) {
             throw new RuntimeException("You have already applied to this job!");
         }
 
@@ -54,8 +54,11 @@ public class ApplicationService {
         return mapToResponse(saved);
     }
 
-    public List<ApplicationResponse> getUserApplications(Long userId) {
-        return applicationRepository.findByUserId(userId).stream().map(this::mapToResponse).collect(Collectors.toList());
+    public List<ApplicationResponse> getUserApplications(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new RuntimeException("User not found!"));
+
+        return applicationRepository.findByUserId(user.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     public ApplicationResponse updateStatus(Long applicationId, String newStatus) {
