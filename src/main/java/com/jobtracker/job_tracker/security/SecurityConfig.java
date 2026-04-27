@@ -31,6 +31,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/jobs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/jobs/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/applications/*/status").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/applications").hasRole("ADMIN")
                         .anyRequest().authenticated()).httpBasic(basic ->
                         basic.realmName("Job Tracker"));
         return http.build();

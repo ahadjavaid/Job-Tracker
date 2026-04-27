@@ -69,6 +69,10 @@ public class ApplicationService {
         return  mapToResponse(applicationRepository.save(application));
     }
 
+    public List<ApplicationResponse> getAllApplications() {
+        return applicationRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
     private ApplicationResponse mapToResponse(Application app) {
 
         ApplicationResponse response = new ApplicationResponse();

@@ -37,4 +37,10 @@ public class ApplicationController {
                                                             @RequestParam String updateStatus) {
         return ResponseEntity.ok(applicationService.updateStatus(id, updateStatus));
     }
+
+    @GetMapping
+    public ResponseEntity<List<ApplicationResponse>> getAllApplications() {
+
+        return ResponseEntity.ok(applicationService.getAllApplications());
+    }
 }
