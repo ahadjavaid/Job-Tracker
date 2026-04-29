@@ -77,6 +77,7 @@ public class ApplicationService {
 
         ApplicationResponse response = new ApplicationResponse();
         response.setId(app.getId());
+        response.setUserId(app.getUser().getId());
         response.setStatus(app.getStatus());
         response.setAppliedAt(app.getAppliedAt());
         response.setJobTitle(app.getJob().getTitle());

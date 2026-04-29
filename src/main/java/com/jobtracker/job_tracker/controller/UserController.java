@@ -1,6 +1,7 @@
 package com.jobtracker.job_tracker.controller;
 
 import com.jobtracker.job_tracker.dto.RegisterRequest;
+import com.jobtracker.job_tracker.dto.UserResponse;
 import com.jobtracker.job_tracker.entity.User;
 import com.jobtracker.job_tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,13 @@ public class UserController {
 
     // GET /api/users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // GET /api/users/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return userService.getUserById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 

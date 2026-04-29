@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @JsonPropertyOrder({
         "id",
+        "userId",
         "applicantUsername",
         "jobTitle",
         "company",
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 public class ApplicationResponse {
 
     private Long id;
+    private Long userId;
     private String status;
     private LocalDateTime appliedAt;
     private String jobTitle;

@@ -1,5 +1,6 @@
 package com.jobtracker.job_tracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class Job {
     @Column(nullable = false, updatable = false)
     private LocalDateTime postedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private List<Application> applications;
 
