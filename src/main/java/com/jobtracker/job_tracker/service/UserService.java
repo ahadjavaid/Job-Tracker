@@ -3,6 +3,8 @@ package com.jobtracker.job_tracker.service;
 import com.jobtracker.job_tracker.dto.RegisterRequest;
 import com.jobtracker.job_tracker.dto.UserResponse;
 import com.jobtracker.job_tracker.entity.User;
+import com.jobtracker.job_tracker.exception.DuplicateResourceException;
+import com.jobtracker.job_tracker.exception.ResourceNotFoundException;
 import com.jobtracker.job_tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,13 +30,13 @@ public class UserService {
         // Business Rule 1: username must be unique
 
         if(userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists!");
+            throw new DuplicateResourceException("Username already exists!");
         }
 
         // Business Rule 2: email must be unique
 
         if(userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered!");
+            throw new DuplicateResourceException("Email already registered!");
         }
 
         // Business Rule 3: never save plain text password

@@ -3,6 +3,8 @@ package com.jobtracker.job_tracker.service;
 import com.jobtracker.job_tracker.dto.JobRequest;
 import com.jobtracker.job_tracker.dto.JobResponse;
 import com.jobtracker.job_tracker.entity.Job;
+import com.jobtracker.job_tracker.exception.DuplicateResourceException;
+import com.jobtracker.job_tracker.exception.ResourceNotFoundException;
 import com.jobtracker.job_tracker.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,8 @@ public class JobService {
     }
 
     public JobResponse getJobById(Long id) {
-        Job job = jobRepository.findById(id).orElseThrow( () -> new RuntimeException("Job not found with id: " + id));
+        Job job = jobRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Job not found with id: " + id));
         return mapToResponse(job);
     }
 

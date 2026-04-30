@@ -5,6 +5,7 @@ import com.jobtracker.job_tracker.dto.LoginResponse;
 import com.jobtracker.job_tracker.entity.User;
 import com.jobtracker.job_tracker.repository.UserRepository;
 import com.jobtracker.job_tracker.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +30,7 @@ public class AuthController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 
         // verify username and password
         Authentication authentication = authenticationManager.authenticate(

@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOtherException(Exception ex) {
 
         ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(), LocalDateTime.now());
+                "Something went wrong. Please try again later.", LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }

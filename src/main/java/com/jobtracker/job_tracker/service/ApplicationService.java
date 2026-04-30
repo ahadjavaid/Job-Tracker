@@ -4,6 +4,9 @@ import com.jobtracker.job_tracker.dto.ApplicationResponse;
 import com.jobtracker.job_tracker.entity.Application;
 import com.jobtracker.job_tracker.entity.Job;
 import com.jobtracker.job_tracker.entity.User;
+import com.jobtracker.job_tracker.exception.BadRequestException;
+import com.jobtracker.job_tracker.exception.DuplicateResourceException;
+import com.jobtracker.job_tracker.exception.ResourceNotFoundException;
 import com.jobtracker.job_tracker.repository.ApplicationRepository;
 import com.jobtracker.job_tracker.repository.JobRepository;
 import com.jobtracker.job_tracker.repository.UserRepository;
@@ -29,19 +32,20 @@ public class ApplicationService {
     public ApplicationResponse applyToJob(String username, Long jobId) {
 
         // Business Rule 1: user must exist
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new ResourceNotFoundException("User not found!"));
 
         // Business Rule 2: job must exist
-        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         // Business Rule 3: job must be open
         if(!job.getStatus().equals("OPEN")) {
-            throw new RuntimeException("This job is no longer accepting applications!");
+            throw new BadRequestException("This job is no longer accepting applications!");
         }
 
         // Business Rule 4: user cannot apply twice to same job
         if(applicationRepository.existsByUserIdAndJobId(user.getId(), jobId)) {
-            throw new RuntimeException("You have already applied to this job!");
+            throw new DuplicateResourceException("You have already applied to this job!");
         }
 
         Application application = new Application();
@@ -56,14 +60,14 @@ public class ApplicationService {
 
     public List<ApplicationResponse> getUserApplications(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new RuntimeException("User not found!"));
+                () -> new ResourceNotFoundException("User not found!"));
 
         return applicationRepository.findByUserId(user.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     public ApplicationResponse updateStatus(Long applicationId, String newStatus) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found!"));
 
         application.setStatus(newStatus);
         return  mapToResponse(applicationRepository.save(application));

@@ -4,6 +4,7 @@ import com.jobtracker.job_tracker.dto.RegisterRequest;
 import com.jobtracker.job_tracker.dto.UserResponse;
 import com.jobtracker.job_tracker.entity.User;
 import com.jobtracker.job_tracker.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class UserController {
 
     // POST /api/users/register
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest request) {
         User savedUser = userService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
