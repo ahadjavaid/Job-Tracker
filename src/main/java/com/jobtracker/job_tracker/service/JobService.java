@@ -51,6 +51,9 @@ public class JobService {
     }
 
     public void deleteJob(Long id) {
+        if(!jobRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Job not found with id: " + id);
+        }
         jobRepository.deleteById(id);
     }
 
