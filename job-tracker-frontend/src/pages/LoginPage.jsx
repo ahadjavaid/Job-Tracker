@@ -1,0 +1,183 @@
+import { useState } from "react";
+import { loginUser } from "../services/api";
+
+function LoginPage() {
+
+    // State for form inputs
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    // State for feedback messages
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // This runs when user clicks Login button
+    const handleLogin = async () => {
+
+        // Basic validation
+        if (!username || !password) {
+            setError("Please enter username and password!!");
+            return;
+        }
+
+        try {
+            // Show loading state
+            setLoading(true);
+            setError("");
+
+            // Call Spring Boot login endpoint!!
+            const response = await loginUser({
+                username: username,
+                password: password
+            });
+
+            // Extract data from response
+            const { token, role } = response.data;
+
+            // Save token and role in browser storage
+            localStorage.setItem("token", token);
+            localStorage.setItem("role", role);
+            localStorage.setItem("username", username);
+
+            // Redirect based on role
+            if (role === "ROLE_ADMIN") {
+                window.location.href = "/admin";
+            } else {
+                window.location.href = "/jobs";
+            }
+
+        } catch (err) {
+            // Show error message
+            setError("Invalid username or password!!");
+        } finally {
+            // Hide loading state
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div style={styles.container}>
+            <div style={styles.card}>
+
+                {/* Title */}
+                <h2 style={styles.title}>
+                    Job Tracker
+                </h2>
+                <p style={styles.subtitle}>
+                    Login to your account
+                </p>
+
+                {/* Error Message */}
+                {error && (
+                    <p style={styles.error}>{error}</p>
+                )}
+
+                {/* Username Input */}
+                <input
+                    style={styles.input}
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) =>
+                        setUsername(e.target.value)}
+                />
+
+                {/* Password Input */}
+                <input
+                    style={styles.input}
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) =>
+                        setPassword(e.target.value)}
+                />
+
+                {/* Login Button */}
+                <button
+                    style={styles.button}
+                    onClick={handleLogin}
+                    disabled={loading}>
+                    {loading ? "Logging in..." : "Login"}
+                </button>
+
+                {/* Register Link */}
+                <p style={styles.registerText}>
+                    Don't have an account?{" "}
+                    <span
+                        style={styles.link}
+                        onClick={() =>
+                            window.location.href = "/register"}>
+                        Register here
+                    </span>
+                </p>
+
+            </div>
+        </div>
+    );
+}
+
+// Styles object — like CSS but written in JavaScript!!
+const styles = {
+    container: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f0f2f5"
+    },
+    card: {
+        backgroundColor: "white",
+        padding: "40px",
+        borderRadius: "10px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        width: "100%",
+        maxWidth: "400px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "15px"
+    },
+    title: {
+        textAlign: "center",
+        color: "#1a1a2e",
+        fontSize: "28px",
+        margin: "0"
+    },
+    subtitle: {
+        textAlign: "center",
+        color: "#666",
+        margin: "0"
+    },
+    input: {
+        padding: "12px",
+        borderRadius: "6px",
+        border: "1px solid #ddd",
+        fontSize: "16px",
+        outline: "none"
+    },
+    button: {
+        padding: "12px",
+        backgroundColor: "#4361ee",
+        color: "white",
+        border: "none",
+        borderRadius: "6px",
+        fontSize: "16px",
+        cursor: "pointer"
+    },
+    error: {
+        color: "red",
+        textAlign: "center",
+        margin: "0"
+    },
+    registerText: {
+        textAlign: "center",
+        color: "#666",
+        margin: "0"
+    },
+    link: {
+        color: "#4361ee",
+        cursor: "pointer",
+        fontWeight: "bold"
+    }
+};
+
+export default LoginPage;

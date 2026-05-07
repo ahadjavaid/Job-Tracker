@@ -41,30 +41,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             token = authHeader.substring(7);
 
             // extract username from token
+             // ✅ Wrap in try/catch
+        // If token is malformed → just skip it!!
+        // Don't crash the entire request!!
+        try {
             username = jwtUtil.extractUsername(token);
+        } catch (Exception e) {
+            // Token is malformed or invalid
+            // Just ignore and continue!!
+            // Let Spring Security handle it!!
+        }
 
         }
 
         // if username found and not already authenticated
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // load user from database
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            try {
+            UserDetails userDetails = userDetailService
+                    .loadUserByUsername(username);
 
-            // validate token
-            if(jwtUtil.validateToken(token,username)) {
-
-                // create authentication object
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,null,userDetails.getAuthorities());
-
-                // add request details to auth object
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // tell spring security this user is authenticated
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-
+            if (jwtUtil.validateToken(token, username)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authToken);
             }
+        } catch (Exception e) {
+            // User not found or token invalid
+            // Just skip — Spring Security handles it!!
+        }
 
         }
 
