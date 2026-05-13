@@ -290,10 +290,8 @@ function AdminDashboard() {
                                                 {app.jobTitle}
                                             </h4>
                                             <p style={styles.cardSubtitle}>
-
-                Application ID: {app.id}
-
-            </p>
+                                                  Application ID: {app.id}
+                                            </p>
                                             <p style={styles.cardSubtitle}>
                                                 Applicant:{" "}
                                                 {app.applicantUsername}
@@ -307,12 +305,9 @@ function AdminDashboard() {
                                                 {app.userId}
                                             </p>
                                              <p style={styles.cardSubtitle}>
-
-                Applied At:{" "}
-
-                {new Date(app.appliedAt).toLocaleString()}
-
-            </p>
+                                                Applied At:{" "}
+                                                {new Date(app.appliedAt).toLocaleString()}
+                                                </p>
                                         </div>
 
                                         {/* Status Dropdown */}
