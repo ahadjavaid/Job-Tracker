@@ -6,6 +6,7 @@ function LoginPage() {
     // State for form inputs
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     // State for feedback messages
     const [error, setError] = useState("");
@@ -83,14 +84,73 @@ function LoginPage() {
                 />
 
                 {/* Password Input */}
-                <input
-                    style={styles.input}
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) =>
-                        setPassword(e.target.value)}
-                />
+                <div style={styles.passwordWrapper}>
+                    <input
+                        style={styles.input}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) =>
+                            setPassword(e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        style={styles.eyeButton}
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}>
+                        {showPassword ? (
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                                    stroke="#555"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="3"
+                                    stroke="#555"
+                                    strokeWidth="2"
+                                />
+                            </svg>
+                        ) : (
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                                    stroke="#555"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                <path
+                                    d="M8.5 8.5C9.32843 7.67157 10.5 7.5 12 7.5C15 7.5 16.5 9.5 16.5 12C16.5 13.5 15 15.5 12 15.5C10.5 15.5 9.32843 15.3284 8.5 14.5"
+                                    stroke="#555"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                <path
+                                    d="M3 3L21 21"
+                                    stroke="#555"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                        )}
+                    </button>
+                </div>
 
                 {/* Login Button */}
                 <button
@@ -147,12 +207,35 @@ const styles = {
         color: "#666",
         margin: "0"
     },
+    passwordWrapper: {
+        position: "relative",
+        width: "100%",
+        overflow: "hidden"
+    },
     input: {
-        padding: "12px",
+        width: "100%",
+        padding: "12px 45px 12px 12px",
         borderRadius: "6px",
         border: "1px solid #ddd",
         fontSize: "16px",
-        outline: "none"
+        outline: "none",
+        boxSizing: "border-box"
+    },
+    eyeButton: {
+        position: "absolute",
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        width: "32px",
+        height: "32px",
+        border: "none",
+        background: "transparent",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "0",
+        color: "#555"
     },
     button: {
         padding: "12px",

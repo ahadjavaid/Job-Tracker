@@ -21,7 +21,7 @@ api.interceptors.request.use((config) => {
     // if token exist, add to authorization header
 
     if(token) {
-        config.headers.Authorization = 'Bearer ${token}';
+        config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -50,11 +50,11 @@ export const getAllJobs = () => {
 };
 
 export const getOpenJobs = () => {
-    return api.get('api/jobs/open');
+    return api.get('/api/jobs/open');
 }
 
 export const searchJobs = (keyword) => {
-    return api.get('api/jobs/search?keyword=${keyword}');
+    return api.get(`/api/jobs/search?keyword=${keyword}`);
 };
 
 export const createJob = (jobData) => {
@@ -62,7 +62,7 @@ export const createJob = (jobData) => {
 };
 
 export const deleteJob = (id) => {
-    return api.delete('api/jobs/${id}');
+    return api.delete(`/api/jobs/${id}`);
 };
 
 // ─────────────────────────────────────────
@@ -71,7 +71,7 @@ export const deleteJob = (id) => {
 
  
 export const applyToJob = (jobId) => {
-    return api.post('/api/applications?jobId=${jobId}');
+    return api.post(`/api/applications?jobId=${jobId}`);
 };
 
 export const getMyApplications = () => {
@@ -83,7 +83,7 @@ export const getAllApplications = () => {
 };
 
 export const updateApplicationStatus = (id, newStatus) => {
-    return api.put('/api/applications/${id}/status?newStatus=${newStatus}');
+    return api.put(`/api/applications/${id}/status?newStatus=${newStatus}`);
 };
 
 
