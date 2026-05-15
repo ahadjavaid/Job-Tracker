@@ -10,11 +10,9 @@ function JobsPage() {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
-    // Get username and role from localStorage
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
 
-    // useEffect → runs when page loads!!
     useEffect(() => {
         loadJobs();
     }, []);
@@ -47,15 +45,12 @@ function JobsPage() {
         }
     };
 
-
-
     const handleApply = async (jobId) => {
         try {
             await applyToJob(jobId);
             setMessage(
                 "Application submitted successfully!!"
             );
-            // Clear message after 3 seconds
             setTimeout(() => setMessage(""), 3000);
         } catch (err) {
             if (err.response && err.response.data) {
@@ -66,26 +61,36 @@ function JobsPage() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("username");
+        localStorage.clear();
         window.location.href = "/login";
     };
 
+    const getJobTypeColor = (type) => {
+        switch (type) {
+            case "FULL_TIME":  return "#4361ee";
+            case "PART_TIME":  return "#7209b7";
+            case "INTERNSHIP": return "#f77f00";
+            default:           return "#4361ee";
+        }
+    };
+
     return (
-        <div style={styles.container}>
+        <div style={styles.page}>
 
             {/* Navbar */}
-            <div style={styles.navbar}>
-                <h2 style={styles.navTitle}>
-                    Job Tracker
-                </h2>
+            <nav style={styles.navbar}>
+                <div style={styles.navLeft}>
+                    <div style={styles.navLogo}>JT</div>
+                    <span style={styles.navBrand}>
+                        Job Tracker
+                    </span>
+                </div>
                 <div style={styles.navRight}>
                     <span style={styles.welcomeText}>
-                        Welcome, {username}!!
+                        👋 {username}
                     </span>
                     <button
-                        style={styles.navButton}
+                        style={styles.navBtn}
                         onClick={() =>
                             window.location.href =
                                 "/my-applications"}>
@@ -93,7 +98,7 @@ function JobsPage() {
                     </button>
                     {role === "ROLE_ADMIN" && (
                         <button
-                            style={styles.adminButton}
+                            style={styles.adminBtn}
                             onClick={() =>
                                 window.location.href =
                                     "/admin"}>
@@ -101,113 +106,158 @@ function JobsPage() {
                         </button>
                     )}
                     <button
-                        style={styles.logoutButton}
+                        style={styles.logoutBtn}
                         onClick={handleLogout}>
                         Logout
                     </button>
                 </div>
-            </div>
+            </nav>
 
-            {/* Main Content */}
-            <div style={styles.content}>
-
-                <h3 style={styles.pageTitle}>
-                    Available Jobs
-                </h3>
+            {/* Hero Section */}
+            <div style={styles.hero}>
+                <h1 style={styles.heroTitle}>
+                    Find Your Dream Job
+                </h1>
+                <p style={styles.heroSubtitle}>
+                    Discover {jobs.length}+ opportunities
+                    waiting for you
+                </p>
 
                 {/* Search Bar */}
-                <div style={styles.searchBar}>
+                <div style={styles.searchContainer}>
                     <input
                         style={styles.searchInput}
                         type="text"
-                        placeholder="Search jobs by title..."
+                        placeholder="Search by job title..."
                         value={keyword}
                         onChange={(e) =>
                             setKeyword(e.target.value)}
+                        onKeyPress={(e) =>
+                            e.key === "Enter" &&
+                            handleSearch()}
                     />
                     <button
-                        style={styles.searchButton}
+                        style={styles.searchBtn}
                         onClick={handleSearch}>
                         Search
                     </button>
-                    <button
-                        style={styles.clearButton}
-                        onClick={() => {
-                            setKeyword("");
-                            loadJobs();
-                        }}>
-                        Clear
-                    </button>
+                    {keyword && (
+                        <button
+                            style={styles.clearBtn}
+                            onClick={() => {
+                                setKeyword("");
+                                loadJobs();
+                            }}>
+                            Clear
+                        </button>
+                    )}
                 </div>
+            </div>
 
-                {/* Success Message */}
+            {/* Content */}
+            <div style={styles.content}>
+
+                {/* Messages */}
                 {message && (
-                    <p style={styles.success}>{message}</p>
+                    <div style={styles.successToast}>
+                        ✓ {message}
+                    </div>
                 )}
-
-                {/* Error Message */}
                 {error && (
-                    <p style={styles.error}>{error}</p>
+                    <div style={styles.errorToast}>
+                        ⚠ {error}
+                    </div>
                 )}
 
                 {/* Loading */}
                 {loading && (
-                    <p style={styles.loading}>
-                        Loading jobs...
-                    </p>
+                    <div style={styles.loadingContainer}>
+                        <div style={styles.loadingText}>
+                            Loading jobs...
+                        </div>
+                    </div>
                 )}
 
-                {/* No Jobs Found */}
+                {/* No Jobs */}
                 {!loading && jobs.length === 0 && (
-                    <p style={styles.noJobs}>
-                        No jobs found!!
-                    </p>
+                    <div style={styles.emptyState}>
+                        <p style={styles.emptyTitle}>
+                            No jobs found!!
+                        </p>
+                        <p style={styles.emptySubtitle}>
+                            Try a different search keyword
+                        </p>
+                    </div>
                 )}
 
-                {/* Jobs List */}
-                <div style={styles.jobsList}>
+                {/* Jobs Grid */}
+                <div style={styles.jobsGrid}>
                     {jobs.map((job) => (
                         <div
                             key={job.id}
                             style={styles.jobCard}>
 
-                            {/* Job Header */}
-                            <div style={styles.jobHeader}>
-                                <h3 style={styles.jobTitle}>
-                                    {job.title}
-                                </h3>
-                                <span style={styles.jobType}>
-                                    {job.jobType}
-                                </span>
+                            {/* Card Header */}
+                            <div style={styles.cardHeader}>
+                                <div style={styles.companyLogo}>
+                                    {job.company
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </div>
+                                <div style={styles.cardHeaderRight}>
+                                    <span style={{
+                                        ...styles.jobTypeBadge,
+                                        backgroundColor:
+                                            getJobTypeColor(
+                                                job.jobType)
+                                                + "22",
+                                        color:
+                                            getJobTypeColor(
+                                                job.jobType)
+                                    }}>
+                                        {job.jobType
+                                            .replace("_", " ")}
+                                    </span>
+                                </div>
                             </div>
 
-                            {/* Company and Location */}
-                            <p style={styles.company}>
+                            {/* Job Info */}
+                            <h3 style={styles.jobTitle}>
+                                {job.title}
+                            </h3>
+                            <p style={styles.companyName}>
                                 {job.company}
                             </p>
                             <p style={styles.location}>
                                 📍 {job.location}
                             </p>
 
+                            {/* Divider */}
+                            <div style={styles.cardDivider} />
+
                             {/* Description */}
                             <p style={styles.description}>
-                                {job.description}
+                                {job.description.length > 100
+                                    ? job.description
+                                        .substring(0, 100)
+                                        + "..."
+                                    : job.description}
                             </p>
 
-                            {/* Posted Date */}
-                            <p style={styles.postedAt}>
-                                Posted:{" "}
-                                {new Date(job.postedAt)
-                                    .toLocaleDateString()}
-                            </p>
-
-                            {/* Apply Button */}
-                            <button
-                                style={styles.applyButton}
-                                onClick={() =>
-                                    handleApply(job.id)}>
-                                Apply Now
-                            </button>
+                            {/* Footer */}
+                            <div style={styles.cardFooter}>
+                                <span style={styles.postedDate}>
+                                    🕐{" "}
+                                    {new Date(job.postedAt)
+                                        .toLocaleDateString()}
+                                </span>
+                                <button
+                                    style={styles.applyBtn}
+                                    onClick={() =>
+                                        handleApply(job.id)}>
+                                    Apply Now →
+                                </button>
+                            </div>
 
                         </div>
                     ))}
@@ -218,21 +268,47 @@ function JobsPage() {
 }
 
 const styles = {
-    container: {
+    page: {
         minHeight: "100vh",
-        backgroundColor: "#f0f2f5"
+        backgroundColor: "#0f0f1a",
+        fontFamily: "'Segoe UI', sans-serif"
     },
+
+    // Navbar
     navbar: {
-        backgroundColor: "#1a1a2e",
-        padding: "15px 30px",
+        backgroundColor: "#13131f",
+        borderBottom: "1px solid #1e1e3a",
+        padding: "0 30px",
+        height: "65px",
         display: "flex",
+        alignItems: "center",
         justifyContent: "space-between",
-        alignItems: "center"
+        position: "sticky",
+        top: "0",
+        zIndex: "100"
     },
-    navTitle: {
+    navLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "12px"
+    },
+    navLogo: {
+        width: "36px",
+        height: "36px",
+        borderRadius: "8px",
+        background:
+            "linear-gradient(135deg, #4361ee, #7209b7)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         color: "white",
-        margin: "0",
-        fontSize: "22px"
+        fontWeight: "bold",
+        fontSize: "14px"
+    },
+    navBrand: {
+        color: "white",
+        fontWeight: "700",
+        fontSize: "18px"
     },
     navRight: {
         display: "flex",
@@ -240,150 +316,253 @@ const styles = {
         gap: "12px"
     },
     welcomeText: {
-        color: "white",
+        color: "#9ca3af",
         fontSize: "14px"
     },
-    navButton: {
+    navBtn: {
         padding: "8px 16px",
-        backgroundColor: "#4361ee",
+        backgroundColor: "#1a1a2e",
+        color: "#a8b8ff",
+        border: "1px solid #2d2d4e",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "14px",
+        fontWeight: "500"
+    },
+    adminBtn: {
+        padding: "8px 16px",
+        background:
+            "linear-gradient(135deg, #f72585, #7209b7)",
         color: "white",
         border: "none",
-        borderRadius: "6px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "14px",
+        fontWeight: "500"
+    },
+    logoutBtn: {
+        padding: "8px 16px",
+        backgroundColor: "rgba(239,68,68,0.15)",
+        color: "#ef4444",
+        border: "1px solid rgba(239,68,68,0.3)",
+        borderRadius: "8px",
         cursor: "pointer",
         fontSize: "14px"
     },
-    adminButton: {
-        padding: "8px 16px",
-        backgroundColor: "#f72585",
+
+    // Hero
+    hero: {
+        background:
+            "linear-gradient(135deg, #1a1a3e 0%, #16213e 100%)",
+        padding: "60px 30px",
+        textAlign: "center",
+        borderBottom: "1px solid #1e1e3a"
+    },
+    heroTitle: {
         color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontSize: "14px"
+        fontSize: "42px",
+        fontWeight: "800",
+        margin: "0 0 12px 0",
+        background:
+            "linear-gradient(135deg, #ffffff, #a8b8ff)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent"
     },
-    logoutButton: {
-        padding: "8px 16px",
-        backgroundColor: "#ef233c",
-        color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontSize: "14px"
+    heroSubtitle: {
+        color: "#6b7280",
+        fontSize: "18px",
+        margin: "0 0 30px 0"
     },
-    content: {
-        padding: "30px",
-        maxWidth: "900px",
-        margin: "0 auto"
-    },
-    pageTitle: {
-        color: "#1a1a2e",
-        fontSize: "24px",
-        marginBottom: "20px"
-    },
-    searchBar: {
+    searchContainer: {
         display: "flex",
         gap: "10px",
-        marginBottom: "20px"
+        maxWidth: "600px",
+        margin: "0 auto"
     },
     searchInput: {
         flex: "1",
-        padding: "10px",
-        borderRadius: "6px",
-        border: "1px solid #ddd",
-        fontSize: "16px"
+        padding: "14px 20px",
+        backgroundColor: "#1a1a2e",
+        border: "1px solid #2d2d4e",
+        borderRadius: "10px",
+        color: "white",
+        fontSize: "16px",
+        outline: "none"
     },
-    searchButton: {
-        padding: "10px 20px",
-        backgroundColor: "#4361ee",
+    searchBtn: {
+        padding: "14px 28px",
+        background:
+            "linear-gradient(135deg, #4361ee, #7209b7)",
         color: "white",
         border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontWeight: "600",
+        fontSize: "15px"
     },
-    clearButton: {
-        padding: "10px 20px",
-        backgroundColor: "#adb5bd",
+    clearBtn: {
+        padding: "14px 20px",
+        backgroundColor: "#1a1a2e",
+        color: "#9ca3af",
+        border: "1px solid #2d2d4e",
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontSize: "15px"
+    },
+
+    // Content
+    content: {
+        padding: "40px 30px",
+        maxWidth: "1200px",
+        margin: "0 auto"
+    },
+
+    // Toasts
+    successToast: {
+        backgroundColor: "rgba(34,197,94,0.15)",
+        border: "1px solid rgba(34,197,94,0.3)",
+        borderRadius: "10px",
+        padding: "14px 20px",
+        color: "#22c55e",
+        marginBottom: "20px",
+        fontWeight: "500"
+    },
+    errorToast: {
+        backgroundColor: "rgba(239,68,68,0.15)",
+        border: "1px solid rgba(239,68,68,0.3)",
+        borderRadius: "10px",
+        padding: "14px 20px",
+        color: "#ef4444",
+        marginBottom: "20px",
+        fontWeight: "500"
+    },
+
+    // Loading
+    loadingContainer: {
+        textAlign: "center",
+        padding: "60px"
+    },
+    loadingText: {
+        color: "#6b7280",
+        fontSize: "18px"
+    },
+
+    // Empty State
+    emptyState: {
+        textAlign: "center",
+        padding: "80px 20px"
+    },
+    emptyTitle: {
         color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
+        fontSize: "24px",
+        fontWeight: "600",
+        margin: "0 0 10px 0"
     },
-    jobsList: {
+    emptySubtitle: {
+        color: "#6b7280",
+        fontSize: "16px",
+        margin: "0"
+    },
+
+    // Jobs Grid
+    jobsGrid: {
+        display: "grid",
+        gridTemplateColumns:
+            "repeat(auto-fill, minmax(340px, 1fr))",
+        gap: "24px"
+    },
+
+    // Job Card
+    jobCard: {
+        backgroundColor: "#13131f",
+        border: "1px solid #1e1e3a",
+        borderRadius: "16px",
+        padding: "24px",
         display: "flex",
         flexDirection: "column",
-        gap: "20px"
+        gap: "12px",
+        transition: "transform 0.2s, border-color 0.2s",
+        cursor: "default"
     },
-    jobCard: {
-        backgroundColor: "white",
-        padding: "25px",
-        borderRadius: "10px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+    cardHeader: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
     },
-    jobHeader: {
+    companyLogo: {
+        width: "48px",
+        height: "48px",
+        borderRadius: "12px",
+        background:
+            "linear-gradient(135deg, #4361ee22, #7209b722)",
+        border: "1px solid #2d2d4e",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#a8b8ff",
+        fontWeight: "bold",
+        fontSize: "20px"
+    },
+    cardHeaderRight: {
+        display: "flex",
+        gap: "8px"
+    },
+    jobTypeBadge: {
+        padding: "4px 12px",
+        borderRadius: "20px",
+        fontSize: "12px",
+        fontWeight: "600"
+    },
+    jobTitle: {
+        color: "white",
+        fontSize: "18px",
+        fontWeight: "700",
+        margin: "0"
+    },
+    companyName: {
+        color: "#a8b8ff",
+        fontWeight: "600",
+        margin: "0",
+        fontSize: "15px"
+    },
+    location: {
+        color: "#6b7280",
+        margin: "0",
+        fontSize: "14px"
+    },
+    cardDivider: {
+        height: "1px",
+        backgroundColor: "#1e1e3a"
+    },
+    description: {
+        color: "#9ca3af",
+        fontSize: "14px",
+        lineHeight: "1.6",
+        margin: "0",
+        flex: "1"
+    },
+    cardFooter: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: "8px"
+        marginTop: "auto"
     },
-    jobTitle: {
-        color: "#1a1a2e",
-        margin: "0",
-        fontSize: "20px"
+    postedDate: {
+        color: "#4b5563",
+        fontSize: "13px"
     },
-    jobType: {
-        backgroundColor: "#e0fbfc",
-        color: "#0077b6",
-        padding: "4px 10px",
-        borderRadius: "20px",
-        fontSize: "13px",
-        fontWeight: "bold"
-    },
-    company: {
-        color: "#4361ee",
-        fontWeight: "bold",
-        margin: "0 0 5px 0"
-    },
-    location: {
-        color: "#666",
-        margin: "0 0 10px 0"
-    },
-    description: {
-        color: "#444",
-        lineHeight: "1.6",
-        margin: "0 0 10px 0"
-    },
-    postedAt: {
-        color: "#999",
-        fontSize: "13px",
-        margin: "0 0 15px 0"
-    },
-    applyButton: {
-        padding: "10px 24px",
-        backgroundColor: "#4cc9f0",
+    applyBtn: {
+        padding: "10px 20px",
+        background:
+            "linear-gradient(135deg, #4361ee, #7209b7)",
         color: "white",
         border: "none",
-        borderRadius: "6px",
+        borderRadius: "8px",
         cursor: "pointer",
-        fontWeight: "bold"
-    },
-    success: {
-        color: "green",
-        textAlign: "center",
-        marginBottom: "15px"
-    },
-    error: {
-        color: "red",
-        textAlign: "center",
-        marginBottom: "15px"
-    },
-    loading: {
-        textAlign: "center",
-        color: "#666"
-    },
-    noJobs: {
-        textAlign: "center",
-        color: "#666",
-        fontSize: "18px"
+        fontWeight: "600",
+        fontSize: "14px",
+        boxShadow:
+            "0 4px 15px rgba(67,97,238,0.3)"
     }
 };
 

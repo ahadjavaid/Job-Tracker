@@ -34,8 +34,8 @@ public class ApplicationController {
 
     @PutMapping("/{id}/status")
     public ResponseEntity<ApplicationResponse> updateStatus(@PathVariable Long id,
-                                                            @RequestParam String updateStatus) {
-        return ResponseEntity.ok(applicationService.updateStatus(id, updateStatus));
+                                                            @RequestParam String newStatus) {
+        return ResponseEntity.ok(applicationService.updateStatus(id, newStatus));
     }
 
     @GetMapping

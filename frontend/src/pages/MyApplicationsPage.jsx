@@ -25,37 +25,85 @@ function MyApplicationsPage() {
         }
     };
 
-    // Color based on status!!
-    const getStatusColor = (status) => {
+    const getStatusConfig = (status) => {
         switch (status) {
-            case "APPLIED":    return "#4361ee";
-            case "INTERVIEW":  return "#f77f00";
-            case "OFFER":      return "#2dc653";
-            case "REJECTED":   return "#ef233c";
-            default:           return "#666";
+            case "APPLIED":
+                return {
+                    color: "#4361ee",
+                    bg: "rgba(67,97,238,0.15)",
+                    border: "rgba(67,97,238,0.3)",
+                    icon: "📩"
+                };
+            case "INTERVIEW":
+                return {
+                    color: "#f77f00",
+                    bg: "rgba(247,127,0,0.15)",
+                    border: "rgba(247,127,0,0.3)",
+                    icon: "🎯"
+                };
+            case "OFFER":
+                return {
+                    color: "#22c55e",
+                    bg: "rgba(34,197,94,0.15)",
+                    border: "rgba(34,197,94,0.3)",
+                    icon: "🎉"
+                };
+            case "REJECTED":
+                return {
+                    color: "#ef4444",
+                    bg: "rgba(239,68,68,0.15)",
+                    border: "rgba(239,68,68,0.3)",
+                    icon: "❌"
+                };
+            default:
+                return {
+                    color: "#6b7280",
+                    bg: "rgba(107,114,128,0.15)",
+                    border: "rgba(107,114,128,0.3)",
+                    icon: "📋"
+                };
         }
     };
 
+    const getStats = () => {
+        return {
+            total: applications.length,
+            applied: applications.filter(
+                a => a.status === "APPLIED").length,
+            interview: applications.filter(
+                a => a.status === "INTERVIEW").length,
+            offer: applications.filter(
+                a => a.status === "OFFER").length,
+            rejected: applications.filter(
+                a => a.status === "REJECTED").length
+        };
+    };
+
+    const stats = getStats();
+
     return (
-        <div style={styles.container}>
+        <div style={styles.page}>
 
             {/* Navbar */}
-            <div style={styles.navbar}>
-                <h2 style={styles.navTitle}>
-                    Job Tracker
-                </h2>
+            <nav style={styles.navbar}>
+                <div style={styles.navLeft}>
+                    <div style={styles.navLogo}>JT</div>
+                    <span style={styles.navBrand}>
+                        Job Tracker
+                    </span>
+                </div>
                 <div style={styles.navRight}>
                     <span style={styles.welcomeText}>
-                        Welcome, {username}!!
+                        👋 {username}
                     </span>
                     <button
-                        style={styles.navButton}
+                        style={styles.navBtn}
                         onClick={() =>
                             window.location.href = "/jobs"}>
                         Browse Jobs
                     </button>
                     <button
-                        style={styles.logoutButton}
+                        style={styles.logoutBtn}
                         onClick={() => {
                             localStorage.clear();
                             window.location.href = "/login";
@@ -63,92 +111,213 @@ function MyApplicationsPage() {
                         Logout
                     </button>
                 </div>
-            </div>
+            </nav>
 
             {/* Content */}
             <div style={styles.content}>
 
-                <h3 style={styles.pageTitle}>
-                    My Applications
-                </h3>
-
-                {error && (
-                    <p style={styles.error}>{error}</p>
-                )}
-
-                {loading && (
-                    <p style={styles.loading}>
-                        Loading applications...
+                {/* Page Header */}
+                <div style={styles.pageHeader}>
+                    <h2 style={styles.pageTitle}>
+                        My Applications
+                    </h2>
+                    <p style={styles.pageSubtitle}>
+                        Track your job application journey
                     </p>
+                </div>
+
+                {/* Stats Cards */}
+                <div style={styles.statsGrid}>
+                    <div style={styles.statCard}>
+                        <span style={styles.statNumber}>
+                            {stats.total}
+                        </span>
+                        <span style={styles.statLabel}>
+                            Total Applied
+                        </span>
+                    </div>
+                    <div style={{
+                        ...styles.statCard,
+                        borderColor: "rgba(67,97,238,0.3)"
+                    }}>
+                        <span style={{
+                            ...styles.statNumber,
+                            color: "#4361ee"
+                        }}>
+                            {stats.applied}
+                        </span>
+                        <span style={styles.statLabel}>
+                            In Review
+                        </span>
+                    </div>
+                    <div style={{
+                        ...styles.statCard,
+                        borderColor: "rgba(247,127,0,0.3)"
+                    }}>
+                        <span style={{
+                            ...styles.statNumber,
+                            color: "#f77f00"
+                        }}>
+                            {stats.interview}
+                        </span>
+                        <span style={styles.statLabel}>
+                            Interviews
+                        </span>
+                    </div>
+                    <div style={{
+                        ...styles.statCard,
+                        borderColor: "rgba(34,197,94,0.3)"
+                    }}>
+                        <span style={{
+                            ...styles.statNumber,
+                            color: "#22c55e"
+                        }}>
+                            {stats.offer}
+                        </span>
+                        <span style={styles.statLabel}>
+                            Offers
+                        </span>
+                    </div>
+                </div>
+
+                {/* Error */}
+                {error && (
+                    <div style={styles.errorBox}>
+                        ⚠ {error}
+                    </div>
                 )}
 
-                {!loading && applications.length === 0 && (
+                {/* Loading */}
+                {loading && (
+                    <div style={styles.loadingBox}>
+                        Loading your applications...
+                    </div>
+                )}
+
+                {/* Empty State */}
+                {!loading &&
+                    applications.length === 0 && (
                     <div style={styles.emptyState}>
-                        <p>You haven't applied to any jobs yet!!</p>
+                        <p style={styles.emptyIcon}>
+                            📭
+                        </p>
+                        <p style={styles.emptyTitle}>
+                            No applications yet!!
+                        </p>
+                        <p style={styles.emptySubtitle}>
+                            Start applying to jobs and
+                            track them here!!
+                        </p>
                         <button
-                            style={styles.browseButton}
+                            style={styles.browseBtn}
                             onClick={() =>
-                                window.location.href = "/jobs"}>
-                            Browse Jobs
+                                window.location.href =
+                                    "/jobs"}>
+                            Browse Jobs →
                         </button>
                     </div>
                 )}
 
+                {/* Applications List */}
                 <div style={styles.applicationsList}>
-                    {applications.map((app) => (
-                        <div
-                            key={app.id}
-                            style={styles.appCard}>
+                    {applications.map((app) => {
+                        const config =
+                            getStatusConfig(app.status);
+                        return (
+                            <div
+                                key={app.id}
+                                style={styles.appCard}>
 
-                            {/* Job Title and Status */}
-                            <div style={styles.appHeader}>
-                                <h3 style={styles.jobTitle}>
-                                    {app.jobTitle}
-                                </h3>
-                                <span style={{
+                                {/* Left — Company Logo */}
+                                <div style={styles.appLogo}>
+                                    {app.company
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </div>
+
+                                {/* Middle — Job Info */}
+                                <div style={styles.appInfo}>
+                                    <h3 style={styles.appJobTitle}>
+                                        {app.jobTitle}
+                                    </h3>
+                                    <p style={styles.appCompany}>
+                                        {app.company}
+                                    </p>
+                                    <p style={styles.appDate}>
+                                        Applied:{" "}
+                                        {new Date(
+                                            app.appliedAt)
+                                            .toLocaleDateString()}
+                                    </p>
+                                </div>
+
+                                {/* Right — Status Badge */}
+                                <div style={{
                                     ...styles.statusBadge,
                                     backgroundColor:
-                                        getStatusColor(
-                                            app.status)
+                                        config.bg,
+                                    border: `1px solid
+                                        ${config.border}`,
+                                    color: config.color
                                 }}>
-                                    {app.status}
-                                </span>
+                                    <span>
+                                        {config.icon}
+                                    </span>
+                                    <span>
+                                        {app.status}
+                                    </span>
+                                </div>
+
                             </div>
-
-                            <p style={styles.company}>
-                                {app.company}
-                            </p>
-
-                            <p style={styles.appliedAt}>
-                                Applied:{" "}
-                                {new Date(app.appliedAt)
-                                    .toLocaleDateString()}
-                            </p>
-
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
+
             </div>
         </div>
     );
 }
 
 const styles = {
-    container: {
+    page: {
         minHeight: "100vh",
-        backgroundColor: "#f0f2f5"
+        backgroundColor: "#0f0f1a",
+        fontFamily: "'Segoe UI', sans-serif"
     },
     navbar: {
-        backgroundColor: "#1a1a2e",
-        padding: "15px 30px",
+        backgroundColor: "#13131f",
+        borderBottom: "1px solid #1e1e3a",
+        padding: "0 30px",
+        height: "65px",
         display: "flex",
+        alignItems: "center",
         justifyContent: "space-between",
-        alignItems: "center"
+        position: "sticky",
+        top: "0",
+        zIndex: "100"
     },
-    navTitle: {
+    navLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "12px"
+    },
+    navLogo: {
+        width: "36px",
+        height: "36px",
+        borderRadius: "8px",
+        background:
+            "linear-gradient(135deg, #4361ee, #7209b7)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         color: "white",
-        margin: "0",
-        fontSize: "22px"
+        fontWeight: "bold",
+        fontSize: "14px"
+    },
+    navBrand: {
+        color: "white",
+        fontWeight: "700",
+        fontSize: "18px"
     },
     navRight: {
         display: "flex",
@@ -156,96 +325,171 @@ const styles = {
         gap: "12px"
     },
     welcomeText: {
-        color: "white",
+        color: "#9ca3af",
         fontSize: "14px"
     },
-    navButton: {
+    navBtn: {
         padding: "8px 16px",
-        backgroundColor: "#4361ee",
-        color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
+        backgroundColor: "#1a1a2e",
+        color: "#a8b8ff",
+        border: "1px solid #2d2d4e",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "14px"
     },
-    logoutButton: {
+    logoutBtn: {
         padding: "8px 16px",
-        backgroundColor: "#ef233c",
-        color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
+        backgroundColor: "rgba(239,68,68,0.15)",
+        color: "#ef4444",
+        border: "1px solid rgba(239,68,68,0.3)",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "14px"
     },
     content: {
-        padding: "30px",
+        padding: "40px 30px",
         maxWidth: "900px",
         margin: "0 auto"
     },
+    pageHeader: {
+        marginBottom: "30px"
+    },
     pageTitle: {
-        color: "#1a1a2e",
-        fontSize: "24px",
+        color: "white",
+        fontSize: "32px",
+        fontWeight: "700",
+        margin: "0 0 8px 0"
+    },
+    pageSubtitle: {
+        color: "#6b7280",
+        margin: "0",
+        fontSize: "16px"
+    },
+    statsGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "16px",
+        marginBottom: "30px"
+    },
+    statCard: {
+        backgroundColor: "#13131f",
+        border: "1px solid #1e1e3a",
+        borderRadius: "12px",
+        padding: "20px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px"
+    },
+    statNumber: {
+        color: "white",
+        fontSize: "32px",
+        fontWeight: "800"
+    },
+    statLabel: {
+        color: "#6b7280",
+        fontSize: "14px"
+    },
+    errorBox: {
+        backgroundColor: "rgba(239,68,68,0.15)",
+        border: "1px solid rgba(239,68,68,0.3)",
+        borderRadius: "10px",
+        padding: "14px",
+        color: "#ef4444",
         marginBottom: "20px"
+    },
+    loadingBox: {
+        textAlign: "center",
+        padding: "60px",
+        color: "#6b7280",
+        fontSize: "18px"
+    },
+    emptyState: {
+        textAlign: "center",
+        padding: "80px 20px"
+    },
+    emptyIcon: {
+        fontSize: "60px",
+        margin: "0 0 20px 0"
+    },
+    emptyTitle: {
+        color: "white",
+        fontSize: "24px",
+        fontWeight: "600",
+        margin: "0 0 10px 0"
+    },
+    emptySubtitle: {
+        color: "#6b7280",
+        margin: "0 0 24px 0"
+    },
+    browseBtn: {
+        padding: "12px 28px",
+        background:
+            "linear-gradient(135deg, #4361ee, #7209b7)",
+        color: "white",
+        border: "none",
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontSize: "16px",
+        fontWeight: "600"
     },
     applicationsList: {
         display: "flex",
         flexDirection: "column",
-        gap: "15px"
+        gap: "16px"
     },
     appCard: {
-        backgroundColor: "white",
-        padding: "25px",
-        borderRadius: "10px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-    },
-    appHeader: {
+        backgroundColor: "#13131f",
+        border: "1px solid #1e1e3a",
+        borderRadius: "16px",
+        padding: "24px",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: "8px"
+        gap: "20px"
     },
-    jobTitle: {
-        color: "#1a1a2e",
-        margin: "0",
-        fontSize: "20px"
-    },
-    statusBadge: {
-        color: "white",
-        padding: "4px 12px",
-        borderRadius: "20px",
-        fontSize: "13px",
-        fontWeight: "bold"
-    },
-    company: {
-        color: "#4361ee",
+    appLogo: {
+        width: "52px",
+        height: "52px",
+        borderRadius: "12px",
+        background:
+            "linear-gradient(135deg, #4361ee22, #7209b722)",
+        border: "1px solid #2d2d4e",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#a8b8ff",
         fontWeight: "bold",
-        margin: "0 0 5px 0"
+        fontSize: "22px",
+        flexShrink: "0"
     },
-    appliedAt: {
-        color: "#999",
+    appInfo: {
+        flex: "1"
+    },
+    appJobTitle: {
+        color: "white",
+        fontSize: "18px",
+        fontWeight: "700",
+        margin: "0 0 4px 0"
+    },
+    appCompany: {
+        color: "#a8b8ff",
+        fontWeight: "600",
+        margin: "0 0 4px 0",
+        fontSize: "14px"
+    },
+    appDate: {
+        color: "#4b5563",
         fontSize: "13px",
         margin: "0"
     },
-    emptyState: {
-        textAlign: "center",
-        padding: "50px",
-        color: "#666"
-    },
-    browseButton: {
-        padding: "12px 24px",
-        backgroundColor: "#4361ee",
-        color: "white",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        marginTop: "15px",
-        fontSize: "16px"
-    },
-    error: {
-        color: "red",
-        textAlign: "center"
-    },
-    loading: {
-        textAlign: "center",
-        color: "#666"
+    statusBadge: {
+        padding: "8px 16px",
+        borderRadius: "20px",
+        fontSize: "13px",
+        fontWeight: "700",
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        flexShrink: "0"
     }
 };
 
