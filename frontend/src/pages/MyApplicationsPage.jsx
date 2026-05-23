@@ -197,26 +197,26 @@ function MyApplicationsPage() {
                 {/* Empty State */}
                 {!loading &&
                     applications.length === 0 && (
-                    <div style={styles.emptyState}>
-                        <p style={styles.emptyIcon}>
-                            📭
-                        </p>
-                        <p style={styles.emptyTitle}>
-                            No applications yet!!
-                        </p>
-                        <p style={styles.emptySubtitle}>
-                            Start applying to jobs and
-                            track them here!!
-                        </p>
-                        <button
-                            style={styles.browseBtn}
-                            onClick={() =>
-                                window.location.href =
+                        <div style={styles.emptyState}>
+                            <p style={styles.emptyIcon}>
+                                📭
+                            </p>
+                            <p style={styles.emptyTitle}>
+                                No applications yet!!
+                            </p>
+                            <p style={styles.emptySubtitle}>
+                                Start applying to jobs and
+                                track them here!!
+                            </p>
+                            <button
+                                style={styles.browseBtn}
+                                onClick={() =>
+                                    window.location.href =
                                     "/jobs"}>
-                            Browse Jobs →
-                        </button>
-                    </div>
-                )}
+                                Browse Jobs →
+                            </button>
+                        </div>
+                    )}
 
                 {/* Applications List */}
                 <div style={styles.applicationsList}>

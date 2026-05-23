@@ -6,6 +6,7 @@ function RegisterPage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isEmployer, setIsEmployer] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
@@ -22,7 +23,8 @@ function RegisterPage() {
             await registerUser({
                 username: username,
                 email: email,
-                password: password
+                password: password,
+                role: isEmployer ? "EMPLOYER" : "USER"
             });
             setSuccess(
                 "Account created successfully!! Redirecting to login..."
@@ -176,6 +178,20 @@ function RegisterPage() {
                                 setPassword(e.target.value)}
                             onKeyPress={handleKeyPress}
                         />
+                    </div>
+
+                    {/* Employer Checkbox */}
+                    <div style={styles.checkboxGroup}>
+                        <input
+                            type="checkbox"
+                            id="employerCheck"
+                            checked={isEmployer}
+                            onChange={(e) => setIsEmployer(e.target.checked)}
+                            style={styles.checkbox}
+                        />
+                        <label htmlFor="employerCheck" style={styles.checkboxLabel}>
+                            I want to hire people (Employer Account)
+                        </label>
                     </div>
 
                     {/* Register Button */}
@@ -367,6 +383,24 @@ const styles = {
         color: "white",
         fontSize: "16px",
         outline: "none"
+    },
+    checkboxGroup: {
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        marginTop: "4px",
+        marginBottom: "8px"
+    },
+    checkbox: {
+        width: "18px",
+        height: "18px",
+        cursor: "pointer",
+        accentColor: "#4361ee"
+    },
+    checkboxLabel: {
+        color: "#c8d8f0",
+        fontSize: "14px",
+        cursor: "pointer"
     },
     registerButton: {
         padding: "14px",

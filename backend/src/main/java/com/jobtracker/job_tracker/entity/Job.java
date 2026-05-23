@@ -45,6 +45,10 @@ public class Job {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private List<Application> applications;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employer_id")
+    private User employer;
+
     @PrePersist
     protected void onCreate() {
         this.postedAt = LocalDateTime.now();

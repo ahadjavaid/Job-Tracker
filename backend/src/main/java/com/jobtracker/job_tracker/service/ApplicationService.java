@@ -11,6 +11,8 @@ import com.jobtracker.job_tracker.repository.ApplicationRepository;
 import com.jobtracker.job_tracker.repository.JobRepository;
 import com.jobtracker.job_tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,8 +71,24 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found!"));
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        Job job = application.getJob();
+        if (!isAdmin && (job.getEmployer() == null || !job.getEmployer().getUsername().equals(username))) {
+            throw new RuntimeException("You are not authorized to update this application status");
+        }
+
         application.setStatus(newStatus);
         return  mapToResponse(applicationRepository.save(application));
+    }
+
+    public List<ApplicationResponse> getEmployerApplications(String username) {
+        User employer = userRepository.findByUsername(username).orElseThrow(
+                () -> new ResourceNotFoundException("Employer not found!"));
+        return applicationRepository.findByJobEmployerId(employer.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     public List<ApplicationResponse> getAllApplications() {

@@ -15,5 +15,6 @@ public class JobResponse {
     private String jobType;
     private String status;
     private LocalDateTime postedAt;
+    private String employerUsername;
 
 }

@@ -23,6 +23,12 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobService.createJob(request));
     }
 
+    @GetMapping("/employer")
+    public ResponseEntity<List<JobResponse>> getEmployerJobs() {
+        String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(jobService.getEmployerJobs(username));
+    }
+
     @GetMapping
     public ResponseEntity<List<JobResponse>> getAllJobs() {
         return ResponseEntity.ok(jobService.getAllJobs());

@@ -26,6 +26,8 @@ function LoginPage() {
             localStorage.setItem("username", username);
             if (role === "ROLE_ADMIN") {
                 window.location.href = "/admin";
+            } else if (role === "ROLE_EMPLOYER") {
+                window.location.href = "/employer";
             } else {
                 window.location.href = "/jobs";
             }

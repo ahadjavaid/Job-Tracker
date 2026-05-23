@@ -17,4 +17,6 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     List<Job> findByTitleContainingIgnoreCase(String keyword);
 
+    List<Job> findByEmployerId(Long employerId);
+
 }

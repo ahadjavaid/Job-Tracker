@@ -27,9 +27,14 @@ public class ApplicationController {
 
     @GetMapping("/my-applications")
     public ResponseEntity<List<ApplicationResponse>> getUserApplications() {
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(applicationService.getUserApplications(username));
+    }
+
+    @GetMapping("/employer")
+    public ResponseEntity<List<ApplicationResponse>> getEmployerApplications() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(applicationService.getEmployerApplications(username));
     }
 
     @PutMapping("/{id}/status")

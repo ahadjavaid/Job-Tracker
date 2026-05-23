@@ -40,6 +40,14 @@ export const registerUser = (userData) => {
     return api.post('/api/users/register', userData);
 };
 
+export const getAllUsers = () => {
+    return api.get('/api/users');
+};
+
+export const deleteUser = (id) => {
+    return api.delete(`/api/users/${id}`);
+};
+
 // ─────────────────────────────────────────
 // JOB ENDPOINTS
 // ─────────────────────────────────────────
@@ -47,6 +55,10 @@ export const registerUser = (userData) => {
 
 export const getAllJobs = () => {
     return api.get('/api/jobs');
+};
+
+export const getEmployerJobs = () => {
+    return api.get('/api/jobs/employer');
 };
 
 export const getOpenJobs = () => {
@@ -80,6 +92,10 @@ export const getMyApplications = () => {
 
 export const getAllApplications = () => {
     return api.get('/api/applications');
+};
+
+export const getEmployerApplications = () => {
+    return api.get('/api/applications/employer');
 };
 
 export const updateApplicationStatus = (id, newStatus) => {

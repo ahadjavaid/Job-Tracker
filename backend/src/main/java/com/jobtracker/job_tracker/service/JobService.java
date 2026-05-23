@@ -7,6 +7,12 @@ import com.jobtracker.job_tracker.exception.DuplicateResourceException;
 import com.jobtracker.job_tracker.exception.ResourceNotFoundException;
 import com.jobtracker.job_tracker.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.jobtracker.job_tracker.entity.User;
+import com.jobtracker.job_tracker.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +24,15 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public JobResponse createJob(JobRequest request) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User employer = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
 
         Job job = new Job();
         job.setTitle(request.getTitle());
@@ -27,6 +41,7 @@ public class JobService {
         job.setLocation(request.getLocation());
         job.setJobType(request.getJobType());
         job.setStatus("OPEN");
+        job.setEmployer(employer);
 
         Job saved = jobRepository.save(job);
         return mapToResponse(saved);
@@ -44,6 +59,12 @@ public class JobService {
         return jobRepository.findByTitleContainingIgnoreCase(keyword).stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
+    public List<JobResponse> getEmployerJobs(String username) {
+        User employer = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
+        return jobRepository.findByEmployerId(employer.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
     public JobResponse getJobById(Long id) {
         Job job = jobRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Job not found with id: " + id));
@@ -51,9 +72,18 @@ public class JobService {
     }
 
     public void deleteJob(Long id) {
-        if(!jobRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Job not found with id: " + id);
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + id));
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && (job.getEmployer() == null || !job.getEmployer().getUsername().equals(username))) {
+            throw new RuntimeException("You are not authorized to delete this job");
         }
+        
         jobRepository.deleteById(id);
     }
 
@@ -69,6 +99,9 @@ public class JobService {
         response.setJobType(job.getJobType());
         response.setStatus(job.getStatus());
         response.setPostedAt(job.getPostedAt());
+        if (job.getEmployer() != null) {
+            response.setEmployerUsername(job.getEmployer().getUsername());
+        }
         return response;
     }
 }

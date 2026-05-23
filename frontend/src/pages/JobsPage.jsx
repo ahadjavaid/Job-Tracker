@@ -67,10 +67,10 @@ function JobsPage() {
 
     const getJobTypeColor = (type) => {
         switch (type) {
-            case "FULL_TIME":  return "#4361ee";
-            case "PART_TIME":  return "#7209b7";
+            case "FULL_TIME": return "#4361ee";
+            case "PART_TIME": return "#7209b7";
             case "INTERNSHIP": return "#f77f00";
-            default:           return "#4361ee";
+            default: return "#4361ee";
         }
     };
 
@@ -93,7 +93,7 @@ function JobsPage() {
                         style={styles.navBtn}
                         onClick={() =>
                             window.location.href =
-                                "/my-applications"}>
+                            "/my-applications"}>
                         My Applications
                     </button>
                     {role === "ROLE_ADMIN" && (
@@ -101,7 +101,7 @@ function JobsPage() {
                             style={styles.adminBtn}
                             onClick={() =>
                                 window.location.href =
-                                    "/admin"}>
+                                "/admin"}>
                             Admin Dashboard
                         </button>
                     )}
@@ -210,7 +210,7 @@ function JobsPage() {
                                         backgroundColor:
                                             getJobTypeColor(
                                                 job.jobType)
-                                                + "22",
+                                            + "22",
                                         color:
                                             getJobTypeColor(
                                                 job.jobType)
@@ -240,7 +240,7 @@ function JobsPage() {
                                 {job.description.length > 100
                                     ? job.description
                                         .substring(0, 100)
-                                        + "..."
+                                    + "..."
                                     : job.description}
                             </p>
 

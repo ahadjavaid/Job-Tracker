@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
 import {
-    getAllJobs,
-    getAllApplications,
+    getEmployerJobs,
+    getEmployerApplications,
     createJob,
     deleteJob,
-    updateApplicationStatus,
-    getAllUsers,
-    deleteUser
+    updateApplicationStatus
 } from "../services/api";
 
-function AdminDashboard() {
+function EmployerDashboard() {
 
     const [jobs, setJobs] = useState([]);
     const [applications, setApplications] = useState([]);
-    const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState("jobs");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -40,21 +37,11 @@ function AdminDashboard() {
     useEffect(() => {
         loadJobs();
         loadApplications();
-        loadUsers();
     }, []);
-
-    const loadUsers = async () => {
-        try {
-            const response = await getAllUsers();
-            setUsers(response.data);
-        } catch (err) {
-            setError("Failed to load users!!");
-        }
-    };
 
     const loadJobs = async () => {
         try {
-            const response = await getAllJobs();
+            const response = await getEmployerJobs();
             setJobs(response.data);
         } catch (err) {
             setError("Failed to load jobs!!");
@@ -63,7 +50,7 @@ function AdminDashboard() {
 
     const loadApplications = async () => {
         try {
-            const response = await getAllApplications();
+            const response = await getEmployerApplications();
             setApplications(response.data);
         } catch (err) {
             setError("Failed to load applications!!");
@@ -120,17 +107,6 @@ function AdminDashboard() {
         }
     };
 
-    const handleDeleteUser = async (userId) => {
-        if (!window.confirm("Delete this user permanently?")) return;
-        try {
-            await deleteUser(userId);
-            showMessage("User deleted!!");
-            loadUsers();
-        } catch (err) {
-            showError("Failed to delete user!!");
-        }
-    };
-
     const handleStatusUpdate = async (
         appId, newStatus) => {
         try {
@@ -163,7 +139,7 @@ function AdminDashboard() {
                         Job Tracker
                     </span>
                     <span style={styles.adminBadge}>
-                        ADMIN
+                        EMPLOYER
                     </span>
                 </div>
                 <div style={styles.navRight}>
@@ -185,7 +161,7 @@ function AdminDashboard() {
                 <div style={styles.pageHeader}>
                     <div>
                         <h2 style={styles.pageTitle}>
-                            Admin Dashboard
+                            Employer Dashboard
                         </h2>
                         <p style={styles.pageSubtitle}>
                             Manage jobs and applications
@@ -276,17 +252,6 @@ function AdminDashboard() {
                                 setActiveTab("applications")}>
                             Applications (
                             {applications.length})
-                        </button>
-                        <button
-                            style={{
-                                ...styles.tab,
-                                ...(activeTab === "users"
-                                    ? styles.activeTab
-                                    : {})
-                            }}
-                            onClick={() =>
-                                setActiveTab("users")}>
-                            Users ({users.length})
                         </button>
                     </div>
                     {activeTab === "jobs" && (
@@ -533,38 +498,6 @@ function AdminDashboard() {
                                             Rejected
                                         </option>
                                     </select>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* USERS TAB */}
-                {activeTab === "users" && (
-                    <div style={styles.list}>
-                        {users.map((user) => (
-                            <div key={user.id} style={styles.listCard}>
-                                <div style={styles.listCardLeft}>
-                                    <div style={styles.listLogo}>
-                                        {user.username ? user.username.charAt(0).toUpperCase() : "U"}
-                                    </div>
-                                    <div>
-                                        <h4 style={styles.listTitle}>
-                                            {user.username}
-                                        </h4>
-                                        <p style={styles.listSub}>
-                                            {user.email} {" — "} Role: {user.role ? user.role.replace('ROLE_', '') : 'USER'}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div style={styles.listCardRight}>
-                                    {user.role !== 'ROLE_ADMIN' && (
-                                        <button
-                                            style={styles.deleteBtn}
-                                            onClick={() => handleDeleteUser(user.id)}>
-                                            Delete
-                                        </button>
-                                    )}
                                 </div>
                             </div>
                         ))}
@@ -936,4 +869,4 @@ const styles = {
     }
 };
 
-export default AdminDashboard;
+export default EmployerDashboard;
