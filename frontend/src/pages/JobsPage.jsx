@@ -7,6 +7,7 @@ function JobsPage() {
     const [jobs, setJobs] = useState([]);
     const [keyword, setKeyword] = useState("");
     const [loading, setLoading] = useState(true);
+    const [selectedJob, setSelectedJob] = useState(null);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
@@ -251,18 +252,65 @@ function JobsPage() {
                                     {new Date(job.postedAt)
                                         .toLocaleDateString()}
                                 </span>
-                                <button
-                                    style={styles.applyBtn}
-                                    onClick={() =>
-                                        handleApply(job.id)}>
-                                    Apply Now →
-                                </button>
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                    <button
+                                        style={styles.detailsBtn}
+                                        onClick={() => setSelectedJob(job)}>
+                                        View Details
+                                    </button>
+                                    <button
+                                        style={styles.applyBtn}
+                                        onClick={() => handleApply(job.id)}>
+                                        Apply
+                                    </button>
+                                </div>
                             </div>
 
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Modal */}
+            {selectedJob && (
+                <div style={styles.modalOverlay} onClick={() => setSelectedJob(null)}>
+                    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <div style={styles.modalHeader}>
+                            <h3 style={styles.modalTitle}>{selectedJob.title}</h3>
+                            <button style={styles.closeBtn} onClick={() => setSelectedJob(null)}>
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div style={styles.modalBody}>
+                            <div style={styles.modalMeta}>
+                                <p style={{margin: "4px 0"}}><strong>Company:</strong> {selectedJob.company}</p>
+                                <p style={{margin: "4px 0"}}><strong>Location:</strong> {selectedJob.location}</p>
+                                <p style={{margin: "4px 0"}}><strong>Type:</strong> {selectedJob.jobType.replace("_", " ")}</p>
+                                <p style={{margin: "4px 0"}}><strong>Posted:</strong> {new Date(selectedJob.postedAt).toLocaleDateString()}</p>
+                            </div>
+                            
+                            <h4 style={{ color: "white", marginTop: "24px", marginBottom: "12px", fontSize: "16px" }}>Job Description</h4>
+                            <div style={styles.fullDescription}>
+                                {selectedJob.description.split('\n').map((line, i) => (
+                                    <p key={i} style={{marginTop: 0, marginBottom: "10px"}}>{line}</p>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div style={styles.modalFooter}>
+                            <button
+                                style={styles.applyBtn}
+                                onClick={() => {
+                                    handleApply(selectedJob.id);
+                                    setSelectedJob(null);
+                                }}>
+                                Apply Now →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -563,6 +611,90 @@ const styles = {
         fontSize: "14px",
         boxShadow:
             "0 4px 15px rgba(67,97,238,0.3)"
+    },
+    detailsBtn: {
+        padding: "10px 16px",
+        backgroundColor: "#1a1a2e",
+        color: "#a8b8ff",
+        border: "1px solid #2d2d4e",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontWeight: "600",
+        fontSize: "14px"
+    },
+
+    // Modal
+    modalOverlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.75)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        padding: "20px"
+    },
+    modalContent: {
+        backgroundColor: "#13131f",
+        border: "1px solid #2d2d4e",
+        borderRadius: "16px",
+        width: "100%",
+        maxWidth: "650px",
+        maxHeight: "85vh",
+        display: "flex",
+        flexDirection: "column",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.5)"
+    },
+    modalHeader: {
+        padding: "20px 24px",
+        borderBottom: "1px solid #1e1e3a",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    modalTitle: {
+        color: "white",
+        margin: 0,
+        fontSize: "20px",
+        fontWeight: "700"
+    },
+    closeBtn: {
+        background: "none",
+        border: "none",
+        color: "#9ca3af",
+        fontSize: "20px",
+        cursor: "pointer",
+        padding: "4px"
+    },
+    modalBody: {
+        padding: "24px",
+        overflowY: "auto",
+        color: "#c8d8f0"
+    },
+    modalMeta: {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "12px",
+        backgroundColor: "#1a1a2e",
+        padding: "16px",
+        borderRadius: "10px",
+        border: "1px solid #2d2d4e",
+        fontSize: "14px"
+    },
+    fullDescription: {
+        color: "#9ca3af",
+        fontSize: "15px",
+        lineHeight: "1.6",
+        whiteSpace: "pre-wrap"
+    },
+    modalFooter: {
+        padding: "20px 24px",
+        borderTop: "1px solid #1e1e3a",
+        display: "flex",
+        justifyContent: "flex-end"
     }
 };
 

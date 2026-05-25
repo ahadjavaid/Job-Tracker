@@ -71,24 +71,24 @@ public class SecurityConfig {
                 configuration.setAllowedOrigins(
                                 List.of("http://localhost:3000"));
 
-                // ✅ Allow ALL methods including
+                // Allow ALL methods including
                 // POST, PUT, DELETE, OPTIONS
                 configuration.setAllowedMethods(
                                 List.of("GET", "POST", "PUT",
                                                 "DELETE", "OPTIONS", "PATCH"));
 
-                // ✅ Allow ALL headers
+                //  Allow ALL headers
                 configuration.setAllowedHeaders(
                                 List.of("*"));
 
-                // ✅ Expose Authorization header to React
+                //  Expose Authorization header to React
                 configuration.setExposedHeaders(
                                 List.of("Authorization"));
 
-                // ✅ Allow credentials (JWT token)
+                //  Allow credentials (JWT token)
                 configuration.setAllowCredentials(true);
 
-                // ✅ Cache preflight for 1 hour
+                //  Cache preflight for 1 hour
                 configuration.setMaxAge(3600L);
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
