@@ -7,10 +7,12 @@ import MyApplicationsPage
     from "./pages/MyApplicationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import EmployerDashboard from "./pages/EmployerDashboard";
+import NotificationToast from "./components/NotificationToast";
 
 function App() {
     return (
         <BrowserRouter>
+            <NotificationToast />
             <Routes>
                 <Route path="/"
                     element={<LoginPage />} />

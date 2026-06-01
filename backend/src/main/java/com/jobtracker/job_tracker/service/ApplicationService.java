@@ -11,6 +11,7 @@ import com.jobtracker.job_tracker.repository.ApplicationRepository;
 import com.jobtracker.job_tracker.repository.JobRepository;
 import com.jobtracker.job_tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class ApplicationService {
 
     @Autowired
     private ApplicationRepository applicationRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private UserRepository userRepository;
@@ -82,7 +86,16 @@ public class ApplicationService {
         }
 
         application.setStatus(newStatus);
-        return  mapToResponse(applicationRepository.save(application));
+        Application saved = applicationRepository.save(application);
+        ApplicationResponse response = mapToResponse(saved);
+
+        // Send real-time notification
+        messagingTemplate.convertAndSend(
+                "/topic/notifications/" + saved.getUser().getUsername(),
+                "Your application for " + job.getTitle() + " has been updated to: " + newStatus
+        );
+
+        return response;
     }
 
     public List<ApplicationResponse> getEmployerApplications(String username) {
