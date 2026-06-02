@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
         "userId",
         "applicantUsername",
         "jobTitle",
+        "jobType",
+        "jobDescription",
+        "jobLocation",
         "company",
         "status",
         "appliedAt"
@@ -23,7 +26,11 @@ public class ApplicationResponse {
     private String status;
     private LocalDateTime appliedAt;
     private String jobTitle;
+    private String jobType;
+    private String jobDescription;
+    private String jobLocation;
     private String company;
     private String applicantUsername;
+    private String applicantEmail;
 
 }

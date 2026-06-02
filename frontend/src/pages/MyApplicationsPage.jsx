@@ -6,6 +6,15 @@ function MyApplicationsPage() {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [expandedAppId, setExpandedAppId] = useState(null);
+
+    const toggleAppDetails = (appId) => {
+        if (expandedAppId === appId) {
+            setExpandedAppId(null);
+        } else {
+            setExpandedAppId(appId);
+        }
+    };
 
     const username = localStorage.getItem("username");
 
@@ -87,9 +96,9 @@ function MyApplicationsPage() {
             {/* Navbar */}
             <nav style={styles.navbar}>
                 <div style={styles.navLeft}>
-                    <div style={styles.navLogo}>JT</div>
+                    <div style={styles.navLogo}>HF</div>
                     <span style={styles.navBrand}>
-                        Job Tracker
+                        HireFlow
                     </span>
                 </div>
                 <div style={styles.navRight}>
@@ -224,50 +233,78 @@ function MyApplicationsPage() {
                         const config =
                             getStatusConfig(app.status);
                         return (
-                            <div
-                                key={app.id}
-                                style={styles.appCard}>
-
-                                {/* Left — Company Logo */}
-                                <div style={styles.appLogo}>
-                                    {app.company
-                                        .charAt(0)
-                                        .toUpperCase()}
+                            <div key={app.id} style={styles.appCardContainer}>
+                                <div
+                                    style={{ ...styles.appCard, cursor: "pointer" }}
+                                    onClick={() => toggleAppDetails(app.id)}>
+    
+                                    {/* Left — Company Logo */}
+                                    <div style={styles.appLogo}>
+                                        {app.company
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                    </div>
+    
+                                    {/* Middle — Job Info */}
+                                    <div style={styles.appInfo}>
+                                        <h3 style={styles.appJobTitle}>
+                                            {app.jobTitle}
+                                        </h3>
+                                        <p style={styles.appCompany}>
+                                            {app.company}
+                                        </p>
+                                        <p style={styles.appDate}>
+                                            Applied:{" "}
+                                            {new Date(
+                                                app.appliedAt)
+                                                .toLocaleDateString()}
+                                        </p>
+                                    </div>
+    
+                                    {/* Right — Status Badge */}
+                                    <div style={{
+                                        ...styles.statusBadge,
+                                        backgroundColor:
+                                            config.bg,
+                                        border: `1px solid
+                                            ${config.border}`,
+                                        color: config.color
+                                    }}>
+                                        <span>
+                                            {config.icon}
+                                        </span>
+                                        <span>
+                                            {app.status}
+                                        </span>
+                                    </div>
+    
                                 </div>
 
-                                {/* Middle — Job Info */}
-                                <div style={styles.appInfo}>
-                                    <h3 style={styles.appJobTitle}>
-                                        {app.jobTitle}
-                                    </h3>
-                                    <p style={styles.appCompany}>
-                                        {app.company}
-                                    </p>
-                                    <p style={styles.appDate}>
-                                        Applied:{" "}
-                                        {new Date(
-                                            app.appliedAt)
-                                            .toLocaleDateString()}
-                                    </p>
-                                </div>
-
-                                {/* Right — Status Badge */}
-                                <div style={{
-                                    ...styles.statusBadge,
-                                    backgroundColor:
-                                        config.bg,
-                                    border: `1px solid
-                                        ${config.border}`,
-                                    color: config.color
-                                }}>
-                                    <span>
-                                        {config.icon}
-                                    </span>
-                                    <span>
-                                        {app.status}
-                                    </span>
-                                </div>
-
+                                {/* Expanded Details */}
+                                {expandedAppId === app.id && (
+                                    <div style={styles.jobDetailsPanel}>
+                                        <div style={styles.detailsGrid}>
+                                            <div style={styles.detailItem}>
+                                                <span style={styles.detailLabel}>Job Type:</span>
+                                                <span style={styles.detailValue}>
+                                                    {app.jobType ? app.jobType.replace("_", " ") : "Not Specified"}
+                                                </span>
+                                            </div>
+                                            <div style={styles.detailItem}>
+                                                <span style={styles.detailLabel}>Location:</span>
+                                                <span style={styles.detailValue}>
+                                                    {app.jobLocation || "Not Specified"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div style={styles.detailDescriptionBox}>
+                                            <span style={styles.detailLabel}>Description:</span>
+                                            <p style={styles.detailDescriptionText}>
+                                                {app.jobDescription || "No description available."}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
@@ -490,6 +527,58 @@ const styles = {
         alignItems: "center",
         gap: "6px",
         flexShrink: "0"
+    },
+    appCardContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0"
+    },
+    jobDetailsPanel: {
+        backgroundColor: "#1a1a2e",
+        border: "1px solid #2d2d4e",
+        borderRadius: "16px",
+        padding: "20px 24px",
+        marginTop: "8px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px"
+    },
+    detailsGrid: {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "16px"
+    },
+    detailItem: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px"
+    },
+    detailLabel: {
+        color: "#6b7280",
+        fontSize: "13px",
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px"
+    },
+    detailValue: {
+        color: "white",
+        fontSize: "15px",
+        fontWeight: "500"
+    },
+    detailDescriptionBox: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+        backgroundColor: "#0f0f1a",
+        padding: "16px",
+        borderRadius: "8px",
+        border: "1px solid #1e1e3a"
+    },
+    detailDescriptionText: {
+        color: "#9ca3af",
+        fontSize: "14px",
+        lineHeight: "1.6",
+        margin: "0"
     }
 };
 

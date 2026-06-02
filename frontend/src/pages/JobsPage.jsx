@@ -81,9 +81,9 @@ function JobsPage() {
             {/* Navbar */}
             <nav style={styles.navbar}>
                 <div style={styles.navLeft}>
-                    <div style={styles.navLogo}>JT</div>
+                    <div style={styles.navLogo}>HF</div>
                     <span style={styles.navBrand}>
-                        Job Tracker
+                        HireFlow
                     </span>
                 </div>
                 <div style={styles.navRight}>

@@ -25,7 +25,8 @@ public class JobController {
 
     @GetMapping("/employer")
     public ResponseEntity<List<JobResponse>> getEmployerJobs() {
-        String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication().getName();
         return ResponseEntity.ok(jobService.getEmployerJobs(username));
     }
 
@@ -54,6 +55,5 @@ public class JobController {
         jobService.deleteJob(id);
         return ResponseEntity.ok("Job deleted successfully");
     }
-
 
 }

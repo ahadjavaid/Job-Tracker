@@ -8,6 +8,7 @@ import {
     getAllUsers,
     deleteUser
 } from "../services/api";
+import AdminAnalytics from "../components/AdminAnalytics";
 
 function AdminDashboard() {
 
@@ -158,9 +159,9 @@ function AdminDashboard() {
             {/* Navbar */}
             <nav style={styles.navbar}>
                 <div style={styles.navLeft}>
-                    <div style={styles.navLogo}>JT</div>
+                    <div style={styles.navLogo}>HF</div>
                     <span style={styles.navBrand}>
-                        Job Tracker
+                        HireFlow
                     </span>
                     <span style={styles.adminBadge}>
                         ADMIN
@@ -287,6 +288,17 @@ function AdminDashboard() {
                             onClick={() =>
                                 setActiveTab("users")}>
                             Users ({users.length})
+                        </button>
+                        <button
+                            style={{
+                                ...styles.tab,
+                                ...(activeTab === "analytics"
+                                    ? styles.activeTab
+                                    : {})
+                            }}
+                            onClick={() =>
+                                setActiveTab("analytics")}>
+                            Analytics
                         </button>
                     </div>
                     {activeTab === "jobs" && (
@@ -488,6 +500,10 @@ function AdminDashboard() {
                                             </p>
 
                                             <p style={styles.listSub}>
+                                                Contact Email: {app.applicantEmail}
+                                            </p>
+
+                                            <p style={styles.listSub}>
                                                 Company: {app.company}
                                             </p>
 
@@ -569,6 +585,11 @@ function AdminDashboard() {
                             </div>
                         ))}
                     </div>
+                )}
+
+                {/* ANALYTICS TAB */}
+                {activeTab === "analytics" && (
+                    <AdminAnalytics jobs={jobs} applications={applications} />
                 )}
             </div>
         </div>

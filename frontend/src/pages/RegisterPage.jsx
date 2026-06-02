@@ -54,7 +54,7 @@ function RegisterPage() {
             <div style={styles.leftPanel}>
                 <div style={styles.brandContent}>
                     <div style={styles.logoCircle}>
-                        <span style={styles.logoText}>JT</span>
+                        <span style={styles.logoText}>HF</span>
                     </div>
                     <h1 style={styles.brandTitle}>
                         Join Us Today!!

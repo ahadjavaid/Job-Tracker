@@ -56,13 +56,15 @@ public class JobService {
     }
 
     public List<JobResponse> searchJobs(String keyword) {
-        return jobRepository.findByTitleContainingIgnoreCase(keyword).stream().map(this::mapToResponse).collect(Collectors.toList());
+        return jobRepository.findByTitleContainingIgnoreCase(keyword).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     public List<JobResponse> getEmployerJobs(String username) {
         User employer = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
-        return jobRepository.findByEmployerId(employer.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
+        return jobRepository.findByEmployerId(employer.getId()).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     public JobResponse getJobById(Long id) {
@@ -74,7 +76,7 @@ public class JobService {
     public void deleteJob(Long id) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + id));
-        
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -83,7 +85,7 @@ public class JobService {
         if (!isAdmin && (job.getEmployer() == null || !job.getEmployer().getUsername().equals(username))) {
             throw new RuntimeException("You are not authorized to delete this job");
         }
-        
+
         jobRepository.deleteById(id);
     }
 

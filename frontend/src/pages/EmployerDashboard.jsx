@@ -6,6 +6,7 @@ import {
     deleteJob,
     updateApplicationStatus
 } from "../services/api";
+import AdminAnalytics from "../components/AdminAnalytics";
 
 function EmployerDashboard() {
 
@@ -134,9 +135,9 @@ function EmployerDashboard() {
             {/* Navbar */}
             <nav style={styles.navbar}>
                 <div style={styles.navLeft}>
-                    <div style={styles.navLogo}>JT</div>
+                    <div style={styles.navLogo}>HF</div>
                     <span style={styles.navBrand}>
-                        Job Tracker
+                        HireFlow
                     </span>
                     <span style={styles.adminBadge}>
                         EMPLOYER
@@ -252,6 +253,17 @@ function EmployerDashboard() {
                                 setActiveTab("applications")}>
                             Applications (
                             {applications.length})
+                        </button>
+                        <button
+                            style={{
+                                ...styles.tab,
+                                ...(activeTab === "analytics"
+                                    ? styles.activeTab
+                                    : {})
+                            }}
+                            onClick={() =>
+                                setActiveTab("analytics")}>
+                            Analytics
                         </button>
                     </div>
                     {activeTab === "jobs" && (
@@ -453,6 +465,10 @@ function EmployerDashboard() {
                                             </p>
 
                                             <p style={styles.listSub}>
+                                                Contact Email: {app.applicantEmail}
+                                            </p>
+
+                                            <p style={styles.listSub}>
                                                 Company: {app.company}
                                             </p>
 
@@ -502,6 +518,11 @@ function EmployerDashboard() {
                             </div>
                         ))}
                     </div>
+                )}
+
+                {/* ANALYTICS TAB */}
+                {activeTab === "analytics" && (
+                    <AdminAnalytics jobs={jobs} applications={applications} />
                 )}
             </div>
         </div>

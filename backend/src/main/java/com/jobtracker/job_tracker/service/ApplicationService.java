@@ -34,7 +34,6 @@ public class ApplicationService {
     @Autowired
     private JobRepository jobRepository;
 
-
     public ApplicationResponse applyToJob(String username, Long jobId) {
 
         // Business Rule 1: user must exist
@@ -45,12 +44,12 @@ public class ApplicationService {
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         // Business Rule 3: job must be open
-        if(!job.getStatus().equals("OPEN")) {
+        if (!job.getStatus().equals("OPEN")) {
             throw new BadRequestException("This job is no longer accepting applications!");
         }
 
         // Business Rule 4: user cannot apply twice to same job
-        if(applicationRepository.existsByUserIdAndJobId(user.getId(), jobId)) {
+        if (applicationRepository.existsByUserIdAndJobId(user.getId(), jobId)) {
             throw new DuplicateResourceException("You have already applied to this job!");
         }
 
@@ -68,7 +67,8 @@ public class ApplicationService {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new ResourceNotFoundException("User not found!"));
 
-        return applicationRepository.findByUserId(user.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
+        return applicationRepository.findByUserId(user.getId()).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     public ApplicationResponse updateStatus(Long applicationId, String newStatus) {
@@ -92,8 +92,7 @@ public class ApplicationService {
         // Send real-time notification
         messagingTemplate.convertAndSend(
                 "/topic/notifications/" + saved.getUser().getUsername(),
-                "Your application for " + job.getTitle() + " has been updated to: " + newStatus
-        );
+                "Your application for " + job.getTitle() + " has been updated to: " + newStatus);
 
         return response;
     }
@@ -101,7 +100,8 @@ public class ApplicationService {
     public List<ApplicationResponse> getEmployerApplications(String username) {
         User employer = userRepository.findByUsername(username).orElseThrow(
                 () -> new ResourceNotFoundException("Employer not found!"));
-        return applicationRepository.findByJobEmployerId(employer.getId()).stream().map(this::mapToResponse).collect(Collectors.toList());
+        return applicationRepository.findByJobEmployerId(employer.getId()).stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     public List<ApplicationResponse> getAllApplications() {
@@ -116,8 +116,12 @@ public class ApplicationService {
         response.setStatus(app.getStatus());
         response.setAppliedAt(app.getAppliedAt());
         response.setJobTitle(app.getJob().getTitle());
+        response.setJobType(app.getJob().getJobType());
+        response.setJobDescription(app.getJob().getDescription());
+        response.setJobLocation(app.getJob().getLocation());
         response.setCompany(app.getJob().getCompany());
         response.setApplicantUsername(app.getUser().getUsername());
-        return  response;
+        response.setApplicantEmail(app.getUser().getEmail());
+        return response;
     }
 }

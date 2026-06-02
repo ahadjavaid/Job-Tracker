@@ -49,10 +49,10 @@ function LoginPage() {
             <div style={styles.leftPanel}>
                 <div style={styles.brandContent}>
                     <div style={styles.logoCircle}>
-                        <span style={styles.logoText}>JT</span>
+                        <span style={styles.logoText}>HF</span>
                     </div>
                     <h1 style={styles.brandTitle}>
-                        Job Tracker
+                        HireFlow
                     </h1>
                     <p style={styles.brandSubtitle}>
                         Your career journey starts here!!
